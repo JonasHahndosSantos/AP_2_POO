@@ -13,41 +13,41 @@ import java.util.List;
 @RequestMapping("/cars")
 public class CarController {
 
-
-    private CarService carService;
+    private final CarService carService;
 
     public CarController(CarService carService) {
         this.carService = carService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Car>> getAllUsers() {
-        return ResponseEntity.ok(carService.getAllUsers());
+    public ResponseEntity<List<Car>> getAllCars() {
+        return ResponseEntity.ok(carService.getAllCars());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Car> getUserById(@PathVariable int id) {
-        return ResponseEntity.ok(this.carService.getUserById(id));
+    public ResponseEntity<Car> getCarById(@PathVariable int id) {
+        return ResponseEntity.ok(carService.getCarById(id));
     }
 
-
     @PostMapping
-    public ResponseEntity<Car> createUser(@RequestBody Car car) {
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(car.getId()).toUri();
-        return ResponseEntity.created(uri).body(this.carService.createCar(car));
+    public ResponseEntity<Car> createCar(@RequestBody Car car) {
+        Car createdCar = carService.createCar(car);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdCar.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(createdCar);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        this.carService.deleteCar(id);
+    public ResponseEntity<Void> deleteCar(@PathVariable int id) {
+        carService.deleteCar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Car> updateUser(@RequestBody Car carRequest, @PathVariable int id) {
-        return ResponseEntity.ok(this.carService.updateCar(carRequest, id));
+    public ResponseEntity<Car> updateCar(@RequestBody Car carRequest, @PathVariable int id) {
+        Car updatedCar = carService.updateCar(carRequest, id);
+        return ResponseEntity.ok(updatedCar);
     }
-
-
 }

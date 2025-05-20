@@ -5,38 +5,42 @@ import com.example.demo.repositories.CarRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarService {
 
-    private CarRepository carRepository;
+    private final CarRepository carRepository;
 
     public CarService(CarRepository carRepository) {
         this.carRepository = carRepository;
     }
 
-    public List<Car> getAllUsers() {
-        return this.carRepository.getAllCars();
+    public List<Car> getAllCars() {
+        return carRepository.findAll();
     }
 
-    public Car getUserById(int id) {
-        return this.carRepository.getCarById(id);
+    public Car getCarById(int id) {
+        return carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Carro não encontrado com id: " + id));
     }
-
 
     public Car createCar(Car car) {
-        return this.carRepository.createCar(car);
+        return carRepository.save(car);
     }
-
 
     public void deleteCar(int id) {
-        this.carRepository.deleteCar(id);
+        carRepository.deleteById(id);
     }
 
+    public Car updateCar(Car carRequest, int id) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Carro não encontrado com id: " + id));
 
-    public Car updateCar(Car userRequest, int id) {
-        return this.carRepository.updateCar(userRequest, id);
+        car.setMarca(carRequest.getMarca());
+        car.setModelo(carRequest.getModelo());
+        car.setAno(carRequest.getAno());
+
+        return carRepository.save(car);
     }
 }
-
-
