@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.Car;
+import com.example.demo.dto.CarDto;
 import com.example.demo.services.CarService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/cars")
 public class CarController {
@@ -20,34 +21,33 @@ public class CarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Car>> getAllCars() {
+    public ResponseEntity<List<CarDto>> getAllCars() {
         return ResponseEntity.ok(carService.getAllCars());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Car> getCarById(@PathVariable int id) {
+    public ResponseEntity<CarDto> getCarById(@PathVariable int id) {
         return ResponseEntity.ok(carService.getCarById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Car> createCar(@RequestBody Car car) {
-        Car createdCar = carService.createCar(car);
+    public ResponseEntity<CarDto> createCar(@RequestBody CarDto dto) {
+        CarDto created = carService.createCar(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdCar.getId())
+                .buildAndExpand(created.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(createdCar);
+        return ResponseEntity.created(uri).body(created);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CarDto> updateCar(@PathVariable int id, @RequestBody CarDto dto) {
+        return ResponseEntity.ok(carService.updateCar(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCar(@PathVariable int id) {
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Car> updateCar(@RequestBody Car carRequest, @PathVariable int id) {
-        Car updatedCar = carService.updateCar(carRequest, id);
-        return ResponseEntity.ok(updatedCar);
     }
 }

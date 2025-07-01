@@ -1,9 +1,10 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "carros") // Você pode mudar o nome da tabela se quiser
+@Table(name = "carros")
 public class Car {
 
     @Id
@@ -14,18 +15,23 @@ public class Car {
     private String modelo;
     private int ano;
 
+    @ManyToOne
+    @JoinColumn(name = "revendedor_id")
+    @JsonBackReference
+    private Revendedor revendedor;
+
     public Car() {
         // Construtor vazio exigido pelo JPA
     }
 
-    public Car(int id, String marca, String modelo, int ano) {
+    public Car(int id, String marca, String modelo, int ano, Revendedor revendedor) {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
         this.ano = ano;
+        this.revendedor = revendedor;
     }
 
-    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -56,5 +62,13 @@ public class Car {
 
     public void setAno(int ano) {
         this.ano = ano;
+    }
+
+    public Revendedor getRevendedor() {
+        return revendedor;
+    }
+
+    public void setRevendedor(Revendedor revendedor) {
+        this.revendedor = revendedor;
     }
 }
